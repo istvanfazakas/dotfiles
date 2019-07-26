@@ -1,0 +1,211 @@
+" Specify a directory for plugins
+" - For Neovim: ~/.local/share/nvim/plugged
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.config/nvim/plugged')
+
+Plug 'Keithbsmiley/rspec.vim', { 'for': 'ruby' }
+Plug 'airblade/vim-gitgutter'
+Plug 'benekastah/neomake'
+Plug 'itchyny/lightline.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'kana/vim-textobj-user', { 'for': ['ruby'] }
+Plug 'nelstrom/vim-textobj-rubyblock', { 'for': ['ruby'] }
+Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'numkil/ag.nvim'
+Plug 'posva/vim-vue'
+Plug 'scrooloose/nerdtree'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'thoughtbot/vim-rspec', { 'for': 'ruby' }
+Plug 'tmhedberg/matchit'
+Plug 'tpope/vim-bundler', { 'for': 'ruby' }
+Plug 'tpope/vim-rails', { 'for': ['ruby', 'eruby', 'haml', 'coffee', 'javascript'] }
+Plug 'tpope/vim-rake', { 'for': 'ruby' }
+Plug 'tpope/vim-rbenv', { 'for': 'ruby' }
+Plug 'vim-ruby/vim-ruby', { 'for': ['ruby', 'haml', 'eruby'] }
+
+call plug#end()
+
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+
+set autoindent
+set background=dark
+set bs=2
+set cindent
+set cmdheight=1
+set colorcolumn=100
+set completeopt-=preview
+set encoding=utf8
+set expandtab
+set hidden
+set ignorecase
+set laststatus=2
+set mouse=a
+set mousehide
+set nobackup
+set nobackup
+set noshowmode
+set noswapfile
+set nowb
+set number
+set regexpengine=1
+set shiftwidth=2
+set showmatch
+set smartcase
+set smarttab
+set softtabstop=4
+set t_Co=256
+set tabstop=2
+set vb
+syntax enable
+filetype plugin on
+
+autocmd vimenter * NERDTree
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
+" Use ag over grep
+set grepprg=ag\ --nogroup
+
+" ag is fast enough that CtrlP doesn't need to cache
+let g:ctrlp_use_caching = 0
+
+let g:ackprg = 'ag --vimgrep'
+let g:ag_working_path_mode="r"
+
+function! GitSearch()
+  let query = input('Search for: ')
+  :call GitSearchForWord(query)
+endfunction
+
+function! GitSearchForWord(query)
+  if !empty(a:query)
+    execute ":Ag " . a:query
+  endif
+endfunction
+
+function! SaveProper()
+  let current_filetype = &filetype
+  if (index(s:tab_sensitive_filetypes, current_filetype) < 0)
+    :%s/\s\+$//e " delete trailing whitespace
+    :set et| retab " change indent to spaces and retab
+  endif
+  :set ff=unix " set line endings to unix
+  :update " write to disk
+endfunction
+
+" Neomake
+let g:neomake_logfile = '/tmp/neomake.log'
+let g:neomake_ruby_reek_maker_errorformat =
+        \ '%E%.%#: Racc::ParseError: %f:%l :: %m,' .
+        \ '%W%f:%l: %m'
+let g:neomake_ruby_reek_maker = {
+    \ 'args': ['--single-line'],
+    \ 'errorformat': g:neomake_ruby_reek_maker_errorformat,
+    \ }
+let b:neomake_ruby_rubocop_exe = '/opt/rbenv/versions/2.1.6/bin/rubocop'
+let g:neomake_ruby_enabled_makers = ['mri', 'rubocop']
+
+" When writing a buffer (no delay).
+call neomake#configure#automake('w')
+" When writing a buffer (no delay), and on normal mode changes (after 750ms).
+call neomake#configure#automake('nw', 750)
+" When reading a buffer (after 1s), and when writing (no delay).
+call neomake#configure#automake('rw', 1000)
+" Full config: when writing or reading a buffer, and on changes in insert and
+" normal mode (after 1s; no delay when writing).
+call neomake#configure#automake('nrwi', 500)
+
+let g:syntastic_ruby_checkers=['rubocop','mri']
+
+" NERDTree show hidden files
+let NERDTreeShowHidden=1
+
+" Always try to find enclosing tags for these file types
+let g:mta_filetypes = { 'html' : 1, 'xhtml': 1, 'xml' : 1, 'jinja' : 1, 'eruby' : 1, 'twig' : 1, 'erb' : 1 }
+
+" set default shell
+let g:noterm_shell = 'fish'
+let g:noterm_default_mod = 'horizontal'
+let g:noterm_keep_term_open = 0
+let g:noterm_autoinsert = 1
+
+let g:vim_json_syntax_conceal = 0
+
+"""""""""""""""""""""""""""""""""""""""
+" Key Maps
+"""""""""""""""""""""""""""""""""""""""
+
+let mapleader = ","
+
+" highlight last inserted text
+nmap gV `[v`]
+
+" close current buffer without closing the window
+nnoremap <leader>x :bp<bar>sp<bar>bn<bar>bd<CR>
+
+" map ESC to exit terminal's insert mode
+tnoremap <Esc> <C-\><C-n>
+
+" map ctrl-b to toggle NerdTree
+nnoremap <C-b> :NERDTreeToggle<CR>
+tnoremap <C-b> <C-\><C-n>:NERDTreeToggle<CR>
+
+" map ctrl-t to FZF
+nnoremap <C-t> :FZF<cr>
+
+" map altup to res +2
+nnoremap <A-Up> :res +2<CR>
+tnoremap <A-Up> <C-\><C-n>:res +2<CR>
+
+" map lat-down to res -5
+nnoremap <A-Down> :res -2<CR>
+tnoremap <A-Down> <C-\><C-n>:res -2<CR>
+
+" map alt-right to vertical resize +2
+nnoremap <A-Right> :vertical resize +2<CR>
+tnoremap <A-Right> <C-\><C-n>:vertical resize +2<CR>
+
+" map alt-left to vertical resize -2
+nnoremap <A-Left> :vertical resize -2<CR>
+tnoremap <A-Left> <C-\><C-n>:vertical resize -2<CR>
+
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" switch splits
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Silver Searcher
+" bind K to grep word under cursor
+nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+tnoremap K <C-\><C-n>:grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+
+" bind \ (backward slash) to grep shortcut
+command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+nnoremap \ :Ag<SPACE>
+
+nnoremap <space>is :call GitSearch()<cr>
+nnoremap <space>s :Ag <C-R><C-W><cr>
+vnoremap <space>s :call GitSearchForWord(GetVisual())<CR>
+nnoremap <silent> <C-s> :call SaveProper()<CR>
+nnoremap <space> :noh<cr>

@@ -1,0 +1,10 @@
+# OS
+.DB_Store
+
+# nvim
+nvim/nvim/init.vim
+
+# fish
+fish/local_config.fish
+fish/fishd.*
+fish/fish_history
