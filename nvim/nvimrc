@@ -23,6 +23,7 @@ Plug 'tpope/vim-rails', { 'for': ['ruby', 'eruby', 'haml', 'coffee', 'javascript
 Plug 'tpope/vim-rake', { 'for': 'ruby' }
 Plug 'tpope/vim-rbenv', { 'for': 'ruby' }
 Plug 'vim-ruby/vim-ruby', { 'for': ['ruby', 'haml', 'eruby'] }
+Plug 'tveskag/nvim-blame-line'
 
 call plug#end()
 
@@ -61,6 +62,7 @@ syntax enable
 filetype plugin on
 
 autocmd vimenter * NERDTree
+autocmd BufEnter * EnableBlameLine
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
