@@ -9,6 +9,7 @@ Plug 'benekastah/neomake'
 Plug 'itchyny/lightline.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'yuki-yano/fzf-preview.vim', { 'branch': 'release/rpc' }
 Plug 'kana/vim-textobj-user', { 'for': ['ruby'] }
 Plug 'nelstrom/vim-textobj-rubyblock', { 'for': ['ruby'] }
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
@@ -45,6 +46,7 @@ set mouse=a
 set mousehide
 set nobackup
 set nobackup
+set notermguicolors
 set noshowmode
 set noswapfile
 set nowb
@@ -161,7 +163,8 @@ nnoremap <C-b> :NERDTreeToggle<CR>
 tnoremap <C-b> <C-\><C-n>:NERDTreeToggle<CR>
 
 " map ctrl-t to FZF
-nnoremap <C-t> :FZF<cr>
+" nnoremap <C-t> :FzfPreviewProjectFiles<cr>
+nnoremap <C-t> :FZf<cr>
 
 " map altup to res +2
 nnoremap <A-Up> :res +2<CR>
@@ -244,3 +247,23 @@ vnoremap <leader>P "*P
 
 " Toggle blame line
 nnoremap <silent> <leader>b :ToggleBlameLine<CR>
+
+# FzF Preview key maps
+nmap <Leader>f [fzf-p]
+xmap <Leader>f [fzf-p]
+
+nnoremap <silent> [fzf-p]p     :<C-u>FzfPreviewFromResourcesRpc project_mru git<CR>
+nnoremap <silent> [fzf-p]gs    :<C-u>FzfPreviewGitStatusRpc<CR>
+nnoremap <silent> [fzf-p]ga    :<C-u>FzfPreviewGitActionsRpc<CR>
+nnoremap <silent> [fzf-p]b     :<C-u>FzfPreviewBuffersRpc<CR>
+nnoremap <silent> [fzf-p]B     :<C-u>FzfPreviewAllBuffersRpc<CR>
+nnoremap <silent> [fzf-p]o     :<C-u>FzfPreviewFromResourcesRpc buffer project_mru<CR>
+nnoremap <silent> [fzf-p]<C-o> :<C-u>FzfPreviewJumpsRpc<CR>
+nnoremap <silent> [fzf-p]g;    :<C-u>FzfPreviewChangesRpc<CR>
+nnoremap <silent> [fzf-p]/     :<C-u>FzfPreviewLinesRpc --add-fzf-arg=--no-sort --add-fzf-arg=--query="'"<CR>
+nnoremap <silent> [fzf-p]*     :<C-u>FzfPreviewLinesRpc --add-fzf-arg=--no-sort --add-fzf-arg=--query="'<C-r>=expand('<cword>')<CR>"<CR>
+nnoremap          [fzf-p]gr    :<C-u>FzfPreviewProjectGrepRpc<Space>
+xnoremap          [fzf-p]gr    "sy:FzfPreviewProjectGrepRpc<Space>-F<Space>"<C-r>=substitute(substitute(@s, '\n', '', 'g'), '/', '\\/', 'g')<CR>"
+nnoremap <silent> [fzf-p]t     :<C-u>FzfPreviewBufferTagsRpc<CR>
+nnoremap <silent> [fzf-p]q     :<C-u>FzfPreviewQuickFixRpc<CR>
+nnoremap <silent> [fzf-p]l     :<C-u>FzfPreviewLocationListRpc<CR>
